@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEINCO Orienta - Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: #f4f7fb;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .view {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .view.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .landing-header {
+      background: linear-gradient(135deg, #0052cc 0%, #0065ff 50%, #0284c7 100%);
+      color: white;
+      padding: 50px 20px 100px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .landing-title {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .landing-subtitle {
+      max-width: 650px;
+      margin: 0 auto;
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .cards-container {
+      max-width: 1100px;
+      margin: -60px auto 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .card-option {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-option:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .bg-icon-blue { background: #eff6ff; }
+    .bg-icon-orange { background: #fff7ed; }
+    .bg-icon-green { background: #f0fdf4; }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 25px;
+      flex-grow: 1;
+    }
+
+    .card-link {
+      background: none;
+      border: none;
+      color: #2563eb;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      padding: 0;
+    }
+
+    .card-link.green { color: #16a34a; }
+
+    .card-link:hover { text-decoration: underline; }
+
+    .stats-container {
+      max-width: 1100px;
+      margin: 0 auto 50px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0284c7;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .chat-wrapper {
+      max-width: 800px;
+      width: 100%;
+      margin: 30px auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 85vh;
+    }
+
+    .chat-header {
+      background: #0052cc;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      background: white;
+      color: #0052cc;
+      border-radius: 8px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .chat-status {
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.9;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+    }
+
+    .btn-back-icon {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn-back-icon:hover { background: rgba(255,255,255,0.25); }
+
+    .chat-body {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: #f8fafc;
+    }
+
+    .chat-welcome-title {
+      text-align: center;
+      color: #1e3a8a;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .chat-welcome-sub {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .bubble-user {
+      align-self: flex-end;
+      background: #e0f2fe;
+      color: #0369a1;
+      border-bottom-right-radius: 2px;
+    }
+
+    .bubble-user .sender-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: #0284c7;
+    }
+
+    .bubble-bot {
+      align-self: flex-start;
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+      border-bottom-left-radius: 2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .bubble-bot .sender-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: #64748b;
+    }
+
+    .info-card-embed {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #334155;
+    }
+
+    .chat-shortcuts {
+      padding: 0 24px 12px 24px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      background: #f8fafc;
+    }
+
+    .btn-shortcut {
+      background: white;
+      border: 1px solid #0052cc;
+      color: #0052cc;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .btn-shortcut:hover {
+      background: #0052cc;
+      color: white;
+    }
+
+    .chat-footer {
+      padding: 16px 24px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: #0052cc;
+    }
+
+    .btn-send {
+      background: #0052cc;
+      color: white;
+      border: none;
+      padding: 0 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-send:hover { background: #003e99; }
+
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+      text-align: center;
+      position: relative;
+    }
+
+    .login-logo {
+      width: 50px;
+      height: 50px;
+      background: #0052cc;
+      color: white;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      color: #0f172a;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .form-input:focus { border-color: #0052cc; }
+
+    .btn-login {
+      width: 100%;
+      background: #0052cc;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn-login:hover { background: #003e99; }
+
+    .forgot-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .forgot-link a { color: #0052cc; font-weight: 600; text-decoration: none; }
+
+    .dash-header {
+      background: #0052cc;
+      color: white;
+      padding: 16px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dash-header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dash-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .dash-content {
+      max-width: 1150px;
+      width: 100%;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-top: 4px solid transparent;
+    }
+
+    .border-blue { border-top-color: #0052cc; }
+    .border-cyan { border-top-color: #0284c7; }
+    .border-green { border-top-color: #16a34a; }
+
+    .metric-title { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+    .metric-value { font-size: 1.8rem; font-weight: 700; color: #0f172a; margin: 8px 0; }
+    .metric-trend { font-size: 0.8rem; color: #16a34a; font-weight: 600; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .dash-box {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .dash-box-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .dash-box-sub { font-size: 0.8rem; color: #64748b; margin-bottom: 20px; }
+
+    .bar-item { margin-bottom: 16px; }
+    .bar-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; font-weight: 500; }
+    .bar-bg { background: #f1f5f9; height: 10px; border-radius: 5px; overflow: hidden; }
+    .bar-fill { background: #0284c7; height: 100%; border-radius: 5px; }
+
+    .dash-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .dash-table th { text-align: left; padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
+    .dash-table td { padding: 12px 0; border-bottom: 1px solid #f8fafc; color: #334155; }
+
+    .tag-dep {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .btn-logout {
+      align-self: flex-end;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-logout:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <div id="view-landing" class="view active">
+    <div class="landing-header">
+      <div class="badge-pill">
+        <span>🤖</span> Plataforma de Orientación Estudiantil
+      </div>
+      <h1 class="landing-title">TEINCO Orienta</h1>
+      <p class="landing-subtitle">
+        Bienvenido al asistente virtual institucional. Selecciona una opción para comenzar: consulta trámites, ingresa al panel administrativo o revisa los reportes de atención.
+      </p>
+    </div>
+
+    <div class="cards-container">
+      <div class="card-option">
+        <div class="card-icon bg-icon-blue">🤖</div>
+        <h2 class="card-title">Asistente Virtual</h2>
+        <p class="card-desc">Chatea con AsistIA y recibe orientación inmediata sobre dependencias y trámites académicos.</p>
+        <button class="card-link" onclick="switchView('view-chat')">Iniciar chat &rarr;</button>
+      </div>
+
+      <div class="card-option">
+        <div class="card-icon bg-icon-orange">🔐</div>
+        <h2 class="card-title">Acceso Administrativo</h2>
+        <p class="card-desc">Inicia sesión con tu correo institucional para gestionar la plataforma y sus contenidos.</p>
+        <button class="card-link" onclick="switchView('view-login')">Iniciar sesión &rarr;</button>
+      </div>
+
+      <div class="card-option">
+        <div class="card-icon bg-icon-green">📊</div>
+        <h2 class="card-title">Panel de Reportes</h2>
+        <p class="card-desc">Consulta métricas, indicadores y estadísticas de atención por dependencia en tiempo real.</p>
+        <button class="card-link green" onclick="switchView('view-dashboard')">Ver dashboard &rarr;</button>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-num">1,240</div>
+        <div class="stat-label">Consultas atendidas este periodo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">98.2%</div>
+        <div class="stat-label">Tasa de respuesta exitosa</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Disponibilidad del asistente virtual</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-chat" class="view">
+    <div class="chat-wrapper">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="chat-avatar">TE</div>
+          <div>
+            <div style="font-weight:700; font-size:1rem;">TEINCO Orienta</div>
+            <div class="chat-status"><span class="status-dot"></span> Asistente Virtual · En línea</div>
+          </div>
+        </div>
+        <button class="btn-back-icon" onclick="switchView('view-landing')">✕ Salir</button>
+      </div>
+
+      <div class="chat-body" id="chat-messages">
+        <div class="chat-welcome-title">¡Hola! Soy AsistIA 🤖</div>
+        <div class="chat-welcome-sub">¿En qué dependencia o trámite te puedo orientar hoy?</div>
+
+        <div class="chat-bubble bubble-user">
+          <div class="sender-tag">Estudiante</div>
+          ¿Dónde puedo solicitar un certificado de notas?
+        </div>
+
+        <div class="chat-bubble bubble-bot">
+          <div class="sender-tag">AsistIA</div>
+          Para este trámite debes dirigirte a la dependencia de <strong>Registro y Control</strong>.
+          <div class="info-card-embed">
+            <div class="info-row">✉️ <strong>Correo:</strong> registro@teinco.edu.co</div>
+            <div class="info-row">🕒 <strong>Horario:</strong> Lunes a Viernes de 8:00 AM a 5:00 PM</div>
+            <div class="info-row">📍 <strong>Ubicación:</strong> Sede Principal — Piso 2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-shortcuts">
+        <button class="btn-shortcut" onclick="sendQuickMessage('Admisiones')">Admisiones</button>
+        <button class="btn-shortcut" onclick="sendQuickMessage('Registro y Control')">Registro y Control</button>
+        <button class="btn-shortcut" onclick="sendQuickMessage('Bienestar')">Bienestar</button>
+        <button class="btn-shortcut" onclick="sendQuickMessage('Coordinación')">Coordinación</button>
+      </div>
+
+      <div class="chat-footer">
+        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escribe tu consulta aquí..." onkeypress="handleKeyPress(event)">
+        <button class="btn-send" onclick="sendMessage()">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-login" class="view">
+    <div style="padding:20px;">
+      <button class="btn-shortcut" onclick="switchView('view-landing')">&larr; Volver al inicio</button>
+    </div>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-logo">TE</div>
+        <h2 class="login-title">Acceso Administrativo</h2>
+        <p class="login-sub">TEINCO Orienta — Panel de gestión</p>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Correo Institucional</label>
+            <input type="email" class="form-input" value="admin@teinco.edu.co" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" class="form-input" value="••••••••" required>
+          </div>
+          <button type="submit" class="btn-login">Ingresar al Panel</button>
+        </form>
+
+        <div class="forgot-link">
+          ¿Olvidaste tu contraseña? <a href="#" onclick="alert('Contacte al administrador del sistema.'); return false;">Recuperar acceso</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-dashboard" class="view">
+    <div class="dash-header">
+      <div class="dash-header-title">
+        <div class="chat-avatar" style="color:#0052cc;">TE</div>
+        <div>
+          <div style="font-weight:700;">Panel de Control</div>
+          <div style="font-size:0.75rem; opacity:0.8;">Reportes de Atención</div>
+        </div>
+      </div>
+      <div class="dash-user-info">
+        <div style="text-align:right;">
+          <div style="font-weight:600;">Admin</div>
+          <div style="font-size:0.75rem; opacity:0.8;">Registro y Control</div>
+        </div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+
+    <div class="dash-content">
+      <div class="metrics-grid">
+        <div class="metric-card border-blue">
+          <div class="metric-title">Total Consultas Recibidas</div>
+          <div class="metric-value">1,240</div>
+          <div class="metric-trend">▲ 12% vs. mes anterior</div>
+        </div>
+        <div class="metric-card border-cyan">
+          <div class="metric-title">Dependencia Más Solicitada</div>
+          <div class="metric-value" style="color:#0284c7;">Admisiones</div>
+          <div style="font-size:0.8rem; color:#64748b;">45% del total de consultas</div>
+        </div>
+        <div class="metric-card border-green">
+          <div class="metric-title">Tasa de Respuesta Exitosa</div>
+          <div class="metric-value" style="color:#16a34a;">98.2%</div>
+          <div class="metric-trend">▲ 1.4% de mejora</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dash-box">
+          <div class="dash-box-title">Distribución de consultas por dependencia</div>
+          <div class="dash-box-sub">Participación relativa · último periodo</div>
+
+          <div class="bar-item">
+            <div class="bar-info"><span>Admisiones</span><span>45%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 45%;"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-info"><span>Registro y Control</span><span>28%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 28%;"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-info"><span>Bienestar</span><span>17%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 17%;"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-info"><span>Coordinación</span><span>10%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 10%;"></div></div>
+          </div>
+        </div>
+
+        <div class="dash-box">
+          <div class="dash-box-title">Preguntas Frecuentes</div>
+          <div class="dash-box-sub">Trámites más consultados</div>
+
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>PREGUNTA</th>
+                <th>DEPENDENCIA</th>
+                <th>CONSULTAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Requisitos de matrícula</td>
+                <td><span class="tag-dep">Admisiones</span></td>
+                <td><strong>380</strong></td>
+              </tr>
+              <tr>
+                <td>Certificado de notas</td>
+                <td><span class="tag-dep">Registro y Control</span></td>
+                <td><strong>210</strong></td>
+              </tr>
+              <tr>
+                <td>Horarios de atención</td>
+                <td><span class="tag-dep" style="background:#f1f5f9; color:#475569;">General</span></td>
+                <td><strong>140</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn-logout" onclick="switchView('view-landing')">🚪 Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <script>
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      switchView('view-dashboard');
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') sendMessage();
+    }
+
+    function sendQuickMessage(topic) {
+      document.getElementById('chat-input-text').value = "¿Información sobre " + topic + "?";
+      sendMessage();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input-text');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatContainer = document.getElementById('chat-messages');
+
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble bubble-user';
+      userBubble.innerHTML = `<div class="sender-tag">Estudiante</div>${text}`;
+      chatContainer.appendChild(userBubble);
+
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      setTimeout(() => {
+        const botBubble = document.createElement('div');
+        botBubble.className = 'chat-bubble bubble-bot';
+        
+        let responseHtml = `<div class="sender-tag">AsistIA</div>Gracias por tu consulta. Tu solicitud sobre <strong>"${text}"</strong> ha sido procesada.`;
+        
+        if (text.toLowerCase().includes('admision') || text.toLowerCase().includes('matricula')) {
+          responseHtml = `<div class="sender-tag">AsistIA</div>Para temas de ingreso debes dirigirte a <strong>Admisiones</strong>.
+            <div class="info-card-embed">
+              <div class="info-row">✉️ <strong>Correo:</strong> admisiones@teinco.edu.co</div>
+              <div class="info-row">📍 <strong>Ubicación:</strong> Sede Principal — Piso 1</div>
+            </div>`;
+        } else if (text.toLowerCase().includes('bienestar')) {
+          responseHtml = `<div class="sender-tag">AsistIA</div>Para actividades y apoyos dirígete a <strong>Bienestar Universitario</strong>.
+            <div class="info-card-embed">
+              <div class="info-row">✉️ <strong>Correo:</strong> bienestar@teinco.edu.co</div>
+              <div class="info-row">📍 <strong>Ubicación:</strong> Sede Campus — Piso 3</div>
+            </div>`;
+        }
+
+        botBubble.innerHTML = responseHtml;
+        chatContainer.appendChild(botBubble);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 700);
+    }
+  </script>
+</body>
+</html>
